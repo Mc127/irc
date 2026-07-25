@@ -11,15 +11,17 @@ int main()
     std::string name("kimo");
     std::string Nname("kimo1");
 
-    Client b(name, Nname);
-    b.join_channel(a);
-    b.join_channel(c);
-    b.leave_channel(a);
-    b.join_channel(a);
-    b.join_channel(a);
-    b.leave_channel(c);
-    b.leave_channel(a);
-    b.leave_channel(a);
+    Client b;
+    b.setNickname(Nname);
+    b.setUsername(name);
+    b.joinChannel(a);
+    b.joinChannel(c);
+    b.leaveChannel(a);
+    b.joinChannel(a);
+    b.joinChannel(a);
+    b.leaveChannel(c);
+    b.leaveChannel(a);
+    b.leaveChannel(a);
 
 
     return 0;

@@ -1,56 +1,107 @@
 #include "Client.hpp"
 
-Client::Client() : nickname(""), username(""), socket(-1), is_operator(false) 
+Client::Client()
 {
-}
-Client::Client(const Client& other)
-{
-    this->nickname = other.nickname;
-    this->username = other.username;
-    this->socket = other.socket;
-    this->channels = other.channels;
-    this->is_operator = other.is_operator;
-}
-Client& Client::operator=(const Client& other)
-{
-    if (this != &other)
-    {
-        this->nickname = other.nickname;
-        this->username = other.username;
-        this->socket = other.socket;
-        this->channels = other.channels;
-        this->is_operator = other.is_operator;
-    }
-    return *this;
 }
 
-Client::Client(std::string &n, std::string &u)
+Client::Client(int fd):_fd(fd)
 {
-    nickname = n;
-    username = u;
 }
 
-void Client::join_channel(Channel &channel)
+
+/////// Setters //////////
+void Client::setNickname(const std::string &nick)
 {
-    if (std::find(channels.begin(), channels.end(), &channel) == channels.end())
+    _nickname = nick;
+}
+void Client::setUsername(const std::string &user)
+{
+    _username = user;
+}
+void Client::setRealname(const std::string &realname)
+{
+    _realname = realname;
+}
+void Client::setHostname(const std::string &hostname)
+{
+    _hostname = hostname;
+}
+void Client::setRegistered(bool value)
+{
+    _registered = value;
+}
+void Client::setPassAccepted(bool value)
+{
+    _passAccepted = value;
+}
+//////////// Getters ///////////
+
+int Client::getFd() const
+{
+    return _fd;
+}
+
+const std::string &Client::getNickname() const
+{
+    return _nickname;
+}
+const std::string &Client::getUsername() const
+{
+    return _username;
+}
+const std::string &Client::getRealname() const
+{
+    return _realname;
+}
+const std::string &Client::getHostname() const
+{
+    return _hostname;
+}
+
+bool Client::isRegistered() const
+{
+    return _registered;
+}
+bool Client::passAccepted() const
+{
+    return _passAccepted;
+}
+
+const std::vector<Channel*> &Client::getChannels() const
+{
+    return _channels;
+}
+
+const std::string &Client::getRecvBuffer() const
+{
+    return _recvBuffer;
+}
+const std::string &Client::getSendBuffer() const
+{
+    return _sendBuffer;
+}
+
+void Client::joinChannel(Channel &channel)
+{
+    if (std::find(_channels.begin(), _channels.end(), &channel) == _channels.end())
     {
-        channel.add_member(*this);
-        this->channels.push_back(&channel);
-        std::cout << username <<" joined successfully #" << channel.getName() << "\n";
+        channel.addMember(*this);
+        this->_channels.push_back(&channel);
+        std::cout << _username <<" joined successfully #" << channel.getName() << "\n";
     }
     else
         std::cout << "You already a memeber of #" << channel.getName() << "\n";
 }
 
-void Client::leave_channel(Channel &channel)
+void Client::leaveChannel(Channel &channel)
 {
-    std::list<Channel*>::iterator it = std::find(channels.begin(), channels.end(), &channel);
-    if (it != channels.end())
+    std::vector<Channel*>::iterator it = std::find(_channels.begin(), _channels.end(), &channel);
+    if (it != _channels.end())
     {
-        channel.remove_member(*this);
-        this->channels.erase(it);
-        std::cout << username <<" Removed successfully  from #" << channel.getName() << "\n";
-        std::cout << "u still in " << channels.size() << " channel\n";
+        channel.removeMember(*this);
+        this->_channels.erase(it);
+        std::cout << _username <<" Removed successfully  from #" << channel.getName() << "\n";
+        std::cout << "u still in " << _channels.size() << " channel\n";
     }
     else
         std::cout << "You're not already a memeber of #" << channel.getName() << "\n";
