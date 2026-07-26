@@ -4,6 +4,7 @@
 #include <vector>
 #include "Client.hpp"
 #include <iostream>
+#include <algorithm>
 #include <map>
 
 class Client;

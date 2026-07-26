@@ -18,10 +18,46 @@ void Channel::setTopic(const std::string &topic)
     _topic = topic;
 }
 
+void Channel::setInviteOnly(bool value)
+{
+    _inviteOnly = value;
+}
+
+void Channel::setTopicRestricted(bool value)
+{
+    _topicRestricted = value;
+}
+
+void Channel::setKey(const std::string &key)
+{
+    _key = key;
+}
+void Channel::setLimit(size_t limit)
+{
+    _limit = limit;
+}
+
+void Channel::removeKey()
+{
+    _key.clear();
+}
+
+void Channel::removeLimit()
+{
+    _limit = 0;
+}
+
 void Channel::addMember(Client &client)
 {
-
-    std::cout << "From channel added !\n";
+    ///passkey handling
+    // invit only
+    // limit
+    if (isMember(&client))
+        throw std::runtime_error("Error : you already a member of this channel");
+    if (inviteOnly())
+    {
+        
+    }
 }
 
 void Channel::removeMember(Client &client)
@@ -73,6 +109,42 @@ size_t Channel::getLimit() const
     return _limit;
 }
 
-const std::string &Channel::getName() const {
+bool Channel::empty() const
+{
+    if (_members.size() == 0 || _invited.size() == 0)
+        return true;
+    return false;
+}
+
+size_t Channel::size() const
+{
+    if (inviteOnly())
+        return _invited.size();
+    return _members.size();
+}
+
+bool Channel::isMember(Client *client) const
+{
+    if (std::find(_invited.begin(), _invited.end(), client) != _invited.end())
+        return true;
+    return false;
+}
+
+bool Channel::isOperator(Client *client) const
+{
+    if (std::find(_operators.begin(), _operators.end(), client) != _operators.end())
+        return true;
+    return false;
+}
+
+bool Channel::isInvited(Client *client) const
+{
+    if (std::find(_members.begin(), _members.end(), client) != _members.end())
+        return true;
+    return false;
+}
+
+const std::string &Channel::getName() const 
+{
     return _name;
 }
